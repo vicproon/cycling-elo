@@ -1,0 +1,12 @@
+GeoAlchemy2
+fastapi_contrib
+minio
+prometheus_fastapi_instrumentator
+sqlmodel
+aioboto3
+pika
+pymongo
+pytz
+python-keycloak
+sqlalchemy==1.4.35
+apprise>=0.9.8.3

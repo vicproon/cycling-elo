@@ -2,6 +2,7 @@ version: '3.8'
 services:
   database:
     image: postgres
+    container_name: 'cycling-elo-postgres'
     restart: always
     environment:
       POSTGRES_USER: root
@@ -11,10 +12,40 @@ services:
       - "5432:5432"
   pgadmin:
     image: dpage/pgadmin4
+    container_name: 'cycling-elo-pgadmin'
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
       - "5050:80"
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'cycling-elo-rabbitmq'
+    restart: always
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+        - rabbitmq_go_net
+
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/server.Dockerfile
+    tty: true
+    environment:
+      - TM_DEV_MODE=0
+    restart: unless-stopped
+    ports:
+      - "9192:8000"
+    containter_name: 'cycling-elo-app'
+
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge
 
